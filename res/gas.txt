@@ -1,0 +1,48 @@
+Algorytm gąsianicy służy do znalezienia w ciągu spójnego podciągu o danej sumie (itp). Możemy próbować znaleźć najmniejszy taki ciąg, największy lub dowolny (pod względem długości). Oczywiście można algorytm modyfikować według własnych potrzeb (tak jak zresztą każdy algorytm).
+
+Algorytm
+W czasie algorytmu będziemy wykonywać ruchy "gąsienicy". Poruszamy albo głową, algo ogonem. Głowa opisuje nam koniec aktualnie rozpatrywanego przedziału, a ogon jego początek. Jeżeli chcemy osiągnąć przedział o sumie k, to będziemy przesuwać nasze krańce w taki sposób:
+Jeżeli suma w rozpatrywanym przedziale jest za mała, to przesuwamy głowę (do przodu)
+Jeżeli suma w rozpatrywanym przedziale jest za duża, to przesuwamy ogon (do przodu)
+Jeżeli suma w rozpatrywanym przedziale jest idealna, to super! Odnotowujemy ten fakt i odpowiednio ustawiamy wynik. Następnym ruchem będzie przesunięcie głowy.
+oczywiście w tym przypadku wartości w ciągu muszą być nieujemne 😉.
+
+Przykład
+Zasymulujmy nasz algorytm na takim przykładzie:
+Mamy znaleźć najkrótszy fragment w ciągu 1 4 5 3 7 2 o sumie 10. (zielony kolor oznacza fragment wyznaczany przez głowę i ogon)
+1 4 5 3 7 2 suma jest mniejsza od 10, więc przesuwamy głowę
+1 4 5 3 7 2 suma jest mniejsza od 10, więc przesuwamy głowę
+1 4 5 3 7 2 suma jest równa 10, więc teraz naszym wynikiem jest 3(długość podciągu, a że wcześniej żadnego podciągu o sumie 10 nie znaleźliśmy, to wynikiem będzie ten znaleziony teraz)
+1 4 5 3 7 2 suma jest większa od 10, więc przesuwamy ogon
+1 4 5 3 7 2 suma jest większa od 10, więc przesuwamy ogon
+1 4 5 3 7 2 suma jest mniejsza od 10, więc przesuwamy głowę
+1 4 5 3 7 2 suma jest większa od 10, więc przesuwamy ogon
+1 4 5 3 7 2 suma jest równa 10. Wcześniej mieliśmy wynik 3, teraz mielibyśmy wynik 2, więc teraz naszym wynikiem jest 2.
+1 4 5 3 7 2 suma jest większa od 10, więc przesuwamy ogon
+1 4 5 3 7 2 suma jest mniejsza od 10, ale głowy nie mamy już gdzie przesunąć, więc kończymy algorytm. Wynikiem jego działania dla tego przykładu będzie 2.
+
+Implementacja i złożoność
+implementacja w c++:
+int wagony[2000010];
+
+int gasienica(int n, int ilec){
+int wyn = 1000000010, glowa = 0, ogon = 1, akt_sum = 0;
+while(glowa < n){
+glowa++;
+akt_sum += wagony[glowa];
+if(akt_sum < ilec){
+continue;
+}
+if(akt_sum == ilec){
+wyn = min(wyn, glowa - ogon + 1);
+}
+while(ogon < glowa && akt_sum>= ilec){
+akt_sum -= wagony[ogon];
+ogon++;
+if(akt_sum == ilec){
+wyn = min(wyn, glowa - ogon + 1);
+}
+}
+}
+return wyn;
+}
